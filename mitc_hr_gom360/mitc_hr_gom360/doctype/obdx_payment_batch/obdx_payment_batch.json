@@ -1,0 +1,168 @@
+{
+ "actions": [],
+ "autoname": "MITC-BAT-.YY.-.MM.-.DD.-.###",
+ "creation": "2026-08-09 21:52:15.818805",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "num_transactions",
+  "column_break_odih",
+  "payment_date",
+  "trans_currency",
+  "total_amount",
+  "section_break_udkj",
+  "debit_acc",
+  "debit_acc_name",
+  "debit_acc_num",
+  "column_break_ryta",
+  "debit_acc_bic",
+  "cost_center",
+  "section_break_ftox",
+  "payment_items_table",
+  "section_break_vyaz",
+  "batch_description",
+  "for_system_use_only_tab",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "OBDX Payment Batch",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "num_transactions",
+   "fieldtype": "Int",
+   "label": "Number of Transactions",
+   "length": 4,
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_odih",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payment_date",
+   "fieldtype": "Date",
+   "label": "Payment Date"
+  },
+  {
+   "default": "MWK",
+   "fieldname": "trans_currency",
+   "fieldtype": "Select",
+   "label": "Transaction Currency",
+   "options": "MWK"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "length": 20,
+   "non_negative": 1,
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_vyaz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "batch_description",
+   "fieldtype": "Data",
+   "label": "Batch Description",
+   "length": 200
+  },
+  {
+   "fieldname": "section_break_udkj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "debit_acc",
+   "fieldtype": "Link",
+   "label": "Debit Account",
+   "options": "RBM Account"
+  },
+  {
+   "fetch_from": "debit_acc.rbm_account_name",
+   "fieldname": "debit_acc_name",
+   "fieldtype": "Data",
+   "label": "Debit Account Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "debit_acc.rbm_account_num",
+   "fieldname": "debit_acc_num",
+   "fieldtype": "Data",
+   "label": "Debit Account Number",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "debit_acc.rbm_swift_bic",
+   "fieldname": "debit_acc_bic",
+   "fieldtype": "Data",
+   "label": "Debit Account BIC",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ryta",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "for_system_use_only_tab",
+   "fieldtype": "Tab Break",
+   "label": "For System Use Only"
+  },
+  {
+   "fieldname": "section_break_ftox",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "payment_items_table",
+   "fieldtype": "Table",
+   "label": "Payment Items Table",
+   "options": "OBDX Normal Payment Reference"
+  }
+ ],
+ "grid_page_length": 50,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-08-16 16:03:50.154001",
+ "modified_by": "Administrator",
+ "module": "Mitc Hr Gom360",
+ "name": "OBDX Payment Batch",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
