@@ -256,6 +256,14 @@ fixtures = [
                     ["module", "=", "Mitc Hr Gom360"]
                 ]
 
+        },
+
+        { 
+            "dt": "Client Script",
+            "filters": [
+                    ["module","=","Mitc Hr Gom360"]
+                ]
+
         }
 ]
 

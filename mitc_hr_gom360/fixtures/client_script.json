@@ -1,0 +1,101 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Government Remittance",
+  "enabled": 1,
+  "modified": "2026-08-07 00:04:02.627773",
+  "module": "Mitc Hr Gom360",
+  "name": "Hide or show PRN field in government remittance doctype",
+  "script": "frappe.ui.form.on('Government Remittance', {\r\n\r\n    refresh(frm) {\r\n        frm.toggle_display('prn', frm.doc.is_mra_remittance);\r\n    },\r\n\r\n    is_mra_remittance(frm) {\r\n        frm.toggle_display('prn', frm.doc.is_mra_remittance);\r\n\r\n        // Optional: clear PRN if unticked\r\n        if (!frm.doc.is_mra_remittance) {\r\n            frm.set_value('prn', '');\r\n        }\r\n    }\r\n\r\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Government Remittance",
+  "enabled": 1,
+  "modified": "2026-08-07 11:44:29.582742",
+  "module": "Mitc Hr Gom360",
+  "name": "Show download as CSV button in Government remittance doctypre",
+  "script": "frappe.listview_settings['Government Remittance'] = {\r\n\r\n    onload(listview) {\r\n\r\n        // Download MRA Remittance CSV\r\n        listview.page.add_action_item(__('Download MRA Remittance CSV'), function () {\r\n\r\n            let checked_items = listview.get_checked_items();\r\n\r\n            if (!checked_items.length) {\r\n                frappe.msgprint(__('Please select at least one Government Remittance'));\r\n                return;\r\n            }\r\n\r\n            let names = checked_items.map(d => d.name);\r\n\r\n            let url =\r\n                '/api/method/download_mra_remittance_csv?government_remittances=' +\r\n                encodeURIComponent(JSON.stringify(names));\r\n\r\n            window.open(url);\r\n        });\r\n\r\n\r\n        // Download Normal Government Remittance CSV\r\n        listview.page.add_action_item(__('Download Government Remittance CSV'), function () {\r\n\r\n            let checked_items = listview.get_checked_items();\r\n\r\n            if (!checked_items.length) {\r\n                frappe.msgprint(__('Please select at least one Government Remittance'));\r\n                return;\r\n            }\r\n\r\n            let names = checked_items.map(d => d.name);\r\n\r\n            let url =\r\n                '/api/method/download_government_remittance_csv?government_remittances=' +\r\n                encodeURIComponent(JSON.stringify(names));\r\n\r\n            window.open(url);\r\n        });\r\n\r\n    }\r\n\r\n};",
+  "view": "List"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Payroll Entry",
+  "enabled": 1,
+  "modified": "2026-08-08 18:08:44.009045",
+  "module": "Mitc Hr Gom360",
+  "name": "Show download as CSV button on payroll entry doctype",
+  "script": "frappe.listview_settings['Payroll Entry'] = {\r\n\r\n    onload(listview) {\r\n\r\n        listview.page.add_action_item(\r\n            __('Download Payroll as CSV'),\r\n            function () {\r\n\r\n                let checked_items = listview.get_checked_items();\r\n\r\n                if (!checked_items.length) {\r\n                    frappe.msgprint(__('Please select at least one Payroll Entry'));\r\n                    return;\r\n                }\r\n\r\n                let names = checked_items.map(d => d.name);\r\n\r\n                let url =\r\n                    '/api/method/download_payroll_csv?payroll_entries=' +\r\n                    encodeURIComponent(JSON.stringify(names));\r\n\r\n                window.open(url);\r\n            }\r\n        );\r\n\r\n    }\r\n};\r\n",
+  "view": "List"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "OBDX Normal Payment Item",
+  "enabled": 1,
+  "modified": "2026-08-09 19:47:23.569038",
+  "module": "Mitc Hr Gom360",
+  "name": "Filter bank account list according to supplier",
+  "script": "frappe.ui.form.on(\"OBDX Normal Payment Item\", {\r\n\r\n    refresh(frm) {\r\n        set_bank_account_filter(frm);\r\n    },\r\n\r\n    party_type(frm) {\r\n\r\n        // Clear fields when switching between Supplier and Employee\r\n        frm.set_value(\"party_name\", \"\");\r\n        frm.set_value(\"payee_account\", \"\");\r\n\r\n        set_bank_account_filter(frm);\r\n    },\r\n\r\n    party_name(frm) {\r\n\r\n        // Clear previously selected bank account\r\n        frm.set_value(\"payee_account\", \"\");\r\n\r\n        set_bank_account_filter(frm);\r\n    }\r\n\r\n});\r\n\r\n\r\nfunction set_bank_account_filter(frm) {\r\n\r\n    frm.set_query(\"payee_account\", function () {\r\n\r\n        if (frm.doc.party_type && frm.doc.party_name) {\r\n\r\n            return {\r\n                filters: {\r\n                    party_type: frm.doc.party_type,\r\n                    party: frm.doc.party_name\r\n                }\r\n            };\r\n        }\r\n\r\n        return {};\r\n    });\r\n\r\n}",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "OBDX Payment Batch",
+  "enabled": 1,
+  "modified": "2026-08-13 23:56:43.677445",
+  "module": "Mitc Hr Gom360",
+  "name": "Filter OBDX Normal Payment Batch Items",
+  "script": "frappe.ui.form.on(\"OBDX Payment Batch\", {\r\n\r\n    refresh(frm) {\r\n        set_payment_item_filter(frm);\r\n        update_batch_totals(frm);\r\n    },\r\n\r\n    validate(frm) {\r\n        update_batch_totals(frm);\r\n    },\r\n\r\n    payment_items_table_add(frm, cdt, cdn) {\r\n        update_batch_totals(frm);\r\n    },\r\n\r\n    payment_items_table_remove(frm, cdt, cdn) {\r\n        update_batch_totals(frm);\r\n    }\r\n\r\n});\r\n\r\n\r\nfrappe.ui.form.on(\"OBDX Normal Payment Reference\", {\r\n\r\n    amount(frm, cdt, cdn) {\r\n        update_batch_totals(frm);\r\n    }\r\n\r\n});\r\n\r\n\r\n// Filter payment items = show only submitted\r\nfunction set_payment_item_filter(frm) {\r\n\r\n    frm.set_query(\"payment_item\", \"payment_items_table\", function() {\r\n\r\n        return {\r\n            filters: {\r\n                docstatus: 1\r\n            }\r\n        };\r\n\r\n    });\r\n\r\n}\r\n\r\n\r\n// update total_amount after selecting payment item\r\nfunction update_batch_totals(frm) {\r\n\r\n    let items = frm.doc.payment_items_table || [];\r\n\r\n    let transaction_count = items.length;\r\n\r\n    let total_amount = 0;\r\n\r\n    items.forEach(row => {\r\n        total_amount += flt(row.amount);\r\n    });\r\n\r\n    frm.set_value(\"num_transactions\", transaction_count);\r\n    frm.set_value(\"total_amount\", total_amount);\r\n}",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "OBDX Payment Batch",
+  "enabled": 1,
+  "modified": "2026-08-13 23:37:28.215430",
+  "module": "Mitc Hr Gom360",
+  "name": "Download Normal Payment as CSV",
+  "script": "frappe.listview_settings['OBDX Payment Batch'] = {\r\n\r\n    onload(listview) {\r\n\r\n        listview.page.add_action_item(\r\n            __('Download Normal Payment CSV'),\r\n            function () {\r\n\r\n                let checked_items = listview.get_checked_items();\r\n\r\n                if (!checked_items.length) {\r\n                    frappe.msgprint(\r\n                        __('Please select at least one OBDX Payment Batch')\r\n                    );\r\n                    return;\r\n                }\r\n\r\n                let names = checked_items.map(d => d.name);\r\n\r\n                let url =\r\n                    '/api/method/generate_obdx_normal_payment_csv?payment_batches=' +\r\n                    encodeURIComponent(JSON.stringify(names));\r\n\r\n                window.open(url);\r\n            }\r\n        );\r\n\r\n    }\r\n\r\n};",
+  "view": "List"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Payroll Entry",
+  "enabled": 1,
+  "modified": "2026-08-14 11:47:27.921366",
+  "module": "Mitc Hr Gom360",
+  "name": "Filter submitted government remittance documents",
+  "script": "// Filter government remittance documents = show only submitted and not MRA\r\nfrappe.ui.form.on(\"Payroll Entry\", {\r\n\r\n    refresh(frm) {\r\n        set_remittance_filter(frm);\r\n    },\r\n\r\n    custom_remittance_reference_document(frm) {\r\n\r\n        if (!frm.doc.custom_remittance_reference_document) {\r\n            frm.set_value(\"custom_trf_source_reference_number\", \"\");\r\n            frm.set_value(\"custom_funding_total_amount\", 0);\r\n            return;\r\n        }\r\n\r\n        frappe.db.get_value(\r\n            \"Government Remittance\",\r\n            frm.doc.custom_remittance_reference_document,\r\n            [\r\n                \"source_ref_number\",\r\n                \"payment_amount\"\r\n            ],\r\n            function(r) {\r\n\r\n                if (r) {\r\n\r\n                    frm.set_value(\r\n                        \"custom_trf_source_reference_number\",\r\n                        r.source_ref_number\r\n                    );\r\n\r\n                    frm.set_value(\r\n                        \"custom_funding_total_amount\",\r\n                        r.payment_amount\r\n                    );\r\n\r\n                }\r\n\r\n            }\r\n        );\r\n    }\r\n\r\n});\r\n\r\n\r\nfunction set_remittance_filter(frm) {\r\n\r\n    frm.set_query(\r\n        \"custom_remittance_reference_document\",\r\n        function() {\r\n\r\n            return {\r\n                filters: {\r\n                    docstatus: 1,\r\n                    is_mra_remittance: 0\r\n                }\r\n            };\r\n\r\n        }\r\n    );\r\n\r\n}",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Loan Disbursement",
+  "enabled": 1,
+  "modified": "2026-08-16 17:06:31.974469",
+  "module": "Mitc Hr Gom360",
+  "name": "Add create payment item",
+  "script": "// Show button to create normal payment item against employee loan\r\nfrappe.ui.form.on(\"Loan Disbursement\", {\r\n\r\n    refresh(frm) {\r\n\r\n        // Only show for submitted Loan Disbursements\r\n        if (frm.doc.docstatus !== 1) {\r\n            return;\r\n        }\r\n\r\n        // Only applicable to Employee loan disbursements\r\n        if (frm.doc.applicant_type !== \"Employee\") {\r\n            return;\r\n        }\r\n\r\n        frm.add_custom_button(\r\n            __(\"OBDX Normal Payment Item\"),\r\n            function () {\r\n\r\n                frappe.route_options = {\r\n                    party_type: \"Employee\",\r\n                    party_name: frm.doc.applicant,\r\n                    amount: frm.doc.sanctioned_loan_amount,\r\n                    loan_disbursement: frm.doc.name,\r\n                    payment_description: \"Disbursement for Loan: \" + frm.doc.against_loan + \" with internal reference: \" + frm.doc.name\r\n                };\r\n\r\n                frappe.new_doc(\"OBDX Normal Payment Item\");\r\n\r\n            },\r\n            __(\"Create\")\r\n        );\r\n\r\n    }\r\n\r\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Employee",
+  "enabled": 1,
+  "modified": "2026-08-16 21:31:38.542349",
+  "module": "Mitc Hr Gom360",
+  "name": "Filter employee bank accounts",
+  "script": "frappe.ui.form.on(\"Employee\", {\r\n\r\n    refresh(frm) {\r\n        set_salary_bank_account_filter(frm);\r\n    }\r\n\r\n});\r\n\r\nfunction set_salary_bank_account_filter(frm) {\r\n\r\n    frm.set_query(\"custom_select_bank_info\", function () {\r\n\r\n        return {\r\n            filters: {\r\n                party_type: \"Employee\",\r\n                party: frm.doc.name\r\n            }\r\n        };\r\n\r\n    });\r\n\r\n}",
+  "view": "Form"
+ }
+]
