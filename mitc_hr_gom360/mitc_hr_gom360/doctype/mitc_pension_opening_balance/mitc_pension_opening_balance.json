@@ -1,0 +1,165 @@
+{
+ "actions": [],
+ "autoname": "PENSION-OPN-BAL-.YYYY.-.###",
+ "creation": "2026-08-22 18:41:15.298429",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "employee_details_section",
+  "employee",
+  "company",
+  "column_break_cvkq",
+  "employee_full_name",
+  "opening_balances_section",
+  "opening_balance_date",
+  "accumulated_from_date",
+  "accumulated_to_date",
+  "column_break_fvbm",
+  "employee_pension_opening_balance",
+  "company_pension_opening_balance",
+  "total_opening_balance",
+  "section_break_lbkp",
+  "remarks",
+  "column_break_bcms",
+  "reference",
+  "for_system_use_tab",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "MITC Pension Opening Balance",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "employee_details_section",
+   "fieldtype": "Section Break",
+   "label": "Employee Details"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "column_break_cvkq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_full_name",
+   "fieldtype": "Data",
+   "label": "Employee Full Name"
+  },
+  {
+   "fieldname": "for_system_use_tab",
+   "fieldtype": "Tab Break",
+   "label": "For System Use"
+  },
+  {
+   "fetch_from": "employee.company",
+   "fieldname": "company",
+   "fieldtype": "Data",
+   "label": "Company"
+  },
+  {
+   "fieldname": "opening_balances_section",
+   "fieldtype": "Section Break",
+   "label": "Opening Balances"
+  },
+  {
+   "fieldname": "employee_pension_opening_balance",
+   "fieldtype": "Currency",
+   "label": "Employee Pension Opening Balance",
+   "non_negative": 1,
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_fvbm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company_pension_opening_balance",
+   "fieldtype": "Currency",
+   "label": "Company Pension Opening Balance",
+   "non_negative": 1,
+   "precision": "2"
+  },
+  {
+   "fieldname": "opening_balance_date",
+   "fieldtype": "Date",
+   "label": "Opening Balance Date"
+  },
+  {
+   "fieldname": "total_opening_balance",
+   "fieldtype": "Currency",
+   "label": "Total Opening Balance",
+   "non_negative": 1,
+   "precision": "2"
+  },
+  {
+   "fieldname": "section_break_lbkp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "column_break_bcms",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reference",
+   "fieldtype": "Data",
+   "label": "Reference"
+  },
+  {
+   "fieldname": "accumulated_from_date",
+   "fieldtype": "Date",
+   "label": "Accumulated From Date"
+  },
+  {
+   "fieldname": "accumulated_to_date",
+   "fieldtype": "Date",
+   "label": "Accumulated To Date"
+  }
+ ],
+ "grid_page_length": 50,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-08-22 18:53:11.292123",
+ "modified_by": "Administrator",
+ "module": "Mitc Hr Gom360",
+ "name": "MITC Pension Opening Balance",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

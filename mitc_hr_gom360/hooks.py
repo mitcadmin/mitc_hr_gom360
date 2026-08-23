@@ -267,3 +267,7 @@ fixtures = [
         }
 ]
 
+# Ignore linked pension contribution record on payroll entry delete
+ignore_links_on_delete = [
+    "MITC Pension Contribution"
+]
