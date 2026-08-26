@@ -1,0 +1,59 @@
+{
+ "add_total_row": 1,
+ "add_translate_data": 0,
+ "columns": [],
+ "creation": "2026-08-26 21:36:30.906100",
+ "disable_prepared_report_automation": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "doctype_to_sync": [],
+ "filters": [
+  {
+   "default": "",
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "mandatory": 0,
+   "options": "Employee",
+   "wildcard_filter": 0
+  },
+  {
+   "default": "2026-04-01",
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "mandatory": 0,
+   "wildcard_filter": 0
+  },
+  {
+   "default": "2027-03-31",
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "mandatory": 0,
+   "wildcard_filter": 0
+  }
+ ],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": null,
+ "modified": "2026-08-26 21:36:30.906100",
+ "modified_by": "Administrator",
+ "module": "Mitc Hr Gom360",
+ "name": "MITC Pension Contribution Report",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT\r\n    pc.employee AS \"Employee:Link/Employee:120\",\r\n    pc.employee_full_name AS \"Employee Name:Data:180\",\r\n    DATE_FORMAT(pc.from_date, '%%M %%Y') AS \"Contribution Month:Data:130\",\r\n    pc.from_date AS \"From Date:Date:100\",\r\n    pc.end_date AS \"End Date:Date:100\",\r\n\r\n    pc.gross_pay AS \"Gross Pay:Currency:130\",\r\n\r\n    pc.employee_pension_contribution\r\n        AS \"Employee Pension (5%%):Currency:150\",\r\n\r\n    pc.company_pension_contribution\r\n        AS \"Company Pension (10%%):Currency:160\",\r\n\r\n    pc.total_pension_contribution\r\n        AS \"Total Pension:Currency:140\",\r\n\r\n    pc.payroll_entry\r\n        AS \"Payroll Entry:Link/Payroll Entry:150\",\r\n\r\n    pc.salary_slip\r\n        AS \"Salary Slip:Link/Salary Slip:160\"\r\n\r\nFROM\r\n    `tabMITC Pension Contribution` pc\r\n\r\nWHERE\r\n    pc.docstatus = 1\r\n\r\n    AND (\r\n        %(employee)s = ''\r\n        OR pc.employee = %(employee)s\r\n    )\r\n\r\n    AND pc.from_date >= %(from_date)s\r\n    AND pc.end_date <= %(to_date)s\r\n\r\nORDER BY\r\n    pc.from_date DESC,\r\n    pc.employee_full_name",
+ "ref_doctype": "MITC Pension Contribution",
+ "report_name": "MITC Pension Contribution Report",
+ "report_script": "conditions = [\"pc.docstatus = 1\"]\nvalues = {}\n\nemployee = filters.get(\"employee\")\nfrom_date = filters.get(\"from_date\")\nto_date = filters.get(\"to_date\")\n\nif employee:\n    conditions.append(\"pc.employee = %(employee)s\")\n    values[\"employee\"] = employee\n\nif from_date:\n    conditions.append(\"pc.from_date >= %(from_date)s\")\n    values[\"from_date\"] = from_date\n\nif to_date:\n    conditions.append(\"pc.from_date <= %(to_date)s\")\n    values[\"to_date\"] = to_date\n\nwhere_clause = \" AND \".join(conditions)\n\nquery = \"\"\"\n    SELECT\n        pc.employee AS employee,\n        pc.employee_full_name AS employee_name,\n        DATE_FORMAT(pc.from_date, '%%M %%Y') AS contribution_month,\n        pc.from_date AS from_date,\n        pc.end_date AS end_date,\n        pc.gross_pay AS gross_pay,\n        pc.employee_pension_contribution AS employee_pension,\n        pc.company_pension_contribution AS company_pension,\n        pc.total_pension_contribution AS total_pension,\n        pc.payroll_entry AS payroll_entry,\n        pc.salary_slip AS salary_slip\n\n    FROM\n        `tabMITC Pension Contribution` pc\n\n    WHERE\n        \"\"\" + where_clause + \"\"\"\n\n    ORDER BY\n        pc.from_date DESC,\n        pc.employee_full_name\n\"\"\"\n\nresult = frappe.db.sql(\n    query,\n    values,\n    as_dict=True\n)\n\ncolumns = [\n    {\n        \"label\": \"Employee\",\n        \"fieldname\": \"employee\",\n        \"fieldtype\": \"Link\",\n        \"options\": \"Employee\",\n        \"width\": 120\n    },\n    {\n        \"label\": \"Employee Name\",\n        \"fieldname\": \"employee_name\",\n        \"fieldtype\": \"Data\",\n        \"width\": 180\n    },\n    {\n        \"label\": \"Contribution Month\",\n        \"fieldname\": \"contribution_month\",\n        \"fieldtype\": \"Data\",\n        \"width\": 130\n    },\n    {\n        \"label\": \"From Date\",\n        \"fieldname\": \"from_date\",\n        \"fieldtype\": \"Date\",\n        \"width\": 100\n    },\n    {\n        \"label\": \"End Date\",\n        \"fieldname\": \"end_date\",\n        \"fieldtype\": \"Date\",\n        \"width\": 100\n    },\n    {\n        \"label\": \"Gross Pay\",\n        \"fieldname\": \"gross_pay\",\n        \"fieldtype\": \"Currency\",\n        \"width\": 130\n    },\n    {\n        \"label\": \"Employee Pension (5%)\",\n        \"fieldname\": \"employee_pension\",\n        \"fieldtype\": \"Currency\",\n        \"width\": 150\n    },\n    {\n        \"label\": \"Company Pension (10%)\",\n        \"fieldname\": \"company_pension\",\n        \"fieldtype\": \"Currency\",\n        \"width\": 160\n    },\n    {\n        \"label\": \"Total Pension\",\n        \"fieldname\": \"total_pension\",\n        \"fieldtype\": \"Currency\",\n        \"width\": 140\n    },\n    {\n        \"label\": \"Payroll Entry\",\n        \"fieldname\": \"payroll_entry\",\n        \"fieldtype\": \"Link\",\n        \"options\": \"Payroll Entry\",\n        \"width\": 150\n    },\n    {\n        \"label\": \"Salary Slip\",\n        \"fieldname\": \"salary_slip\",\n        \"fieldtype\": \"Link\",\n        \"options\": \"Salary Slip\",\n        \"width\": 160\n    }\n]\n\ndata = [columns, result]",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ],
+ "snapshot_report": 0,
+ "timeout": 0
+}
