@@ -1,0 +1,52 @@
+import frappe
+from frappe.utils import getdate, add_months, flt
+from lending.loan_management.doctype.loan_repayment_schedule.loan_repayment_schedule import LoanRepaymentSchedule
+
+class CustomLoanRepaymentSchedule(LoanRepaymentSchedule):
+
+    def get_schedule(self):
+        # 1. Check if Repay Equal Principal is selected
+        if getattr(self, "repayment_method", None) == "Repay Equal Principal":
+            return self.generate_equal_principal_schedule()
+        
+        # 2. Fall back to core EMI logic for all other methods
+        return super().get_schedule()
+
+    def generate_equal_principal_schedule(self):
+        # Determine total periods from standard or custom field
+        periods = int(getattr(self, "repayment_periods", 0) or getattr(self, "custom_rep_repayment_period_in_months", 0) or 0)
+        
+        if not periods or flt(self.loan_amount) <= 0:
+            return []
+
+        schedule = []
+        total_principal = flt(self.loan_amount)
+        annual_interest_rate = flt(self.rate_of_interest) / 100.0
+        monthly_interest_rate = annual_interest_rate / 12.0
+
+        equal_principal_payment = flt(total_principal / periods, 2)
+        remaining_balance = total_principal
+        start_date = getdate(self.repayment_start_date or self.posting_date)
+
+        for month in range(1, periods + 1):
+            interest_payment = flt(remaining_balance * monthly_interest_rate, 2)
+
+            if month == periods:
+                equal_principal_payment = remaining_balance
+
+            total_monthly_payment = equal_principal_payment + interest_payment
+            closing_balance = flt(remaining_balance - equal_principal_payment, 2)
+            payment_date = add_months(start_date, month - 1)
+
+            schedule.append({
+                "idx": month,
+                "payment_date": payment_date,
+                "principal_amount": equal_principal_payment,
+                "interest_amount": interest_payment,
+                "total_payment": total_monthly_payment,
+                "balance_loan_amount": closing_balance
+            })
+
+            remaining_balance = closing_balance
+
+        return schedule

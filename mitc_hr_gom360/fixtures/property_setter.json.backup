@@ -1,0 +1,61 @@
+[
+ {
+  "doctype": "Property Setter",
+  "docstatus": 0,
+  "doctype_or_field": "DocField",
+  "field_name": "repayment_method",
+  "name": "Loan Application-repayment_method-options",
+  "property": "options",
+  "property_type": "Small Text",
+  "value": "\nRepay Fixed Amount per Period\nRepay Over Number of Periods\nRepay Equal Principal",
+  "doc_type": "Loan Application"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Loan",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "repayment_method",
+  "is_system_generated": 0,
+  "modified": "2026-08-29 22:12:28.746449",
+  "module": null,
+  "name": "Loan-repayment_method-options",
+  "property": "options",
+  "property_type": "Small Text",
+  "row_name": null,
+  "value": "\nRepay Fixed Amount per Period\nRepay Over Number of Periods\nRepay Equal Principal"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Loan Disbursement",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "repayment_method",
+  "is_system_generated": 0,
+  "modified": "2026-08-29 22:12:28.769106",
+  "module": null,
+  "name": "Loan Disbursement-repayment_method-options",
+  "property": "options",
+  "property_type": "Small Text",
+  "row_name": null,
+  "value": "\nRepay Fixed Amount per Period\nRepay Over Number of Periods\nRepay Equal Principal"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Loan Repayment Schedule",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "repayment_method",
+  "is_system_generated": 0,
+  "modified": "2026-08-29 22:12:28.790960",
+  "module": null,
+  "name": "Loan Repayment Schedule-repayment_method-options",
+  "property": "options",
+  "property_type": "Small Text",
+  "row_name": null,
+  "value": "\nRepay Fixed Amount per Period\nRepay Over Number of Periods\nRepay Equal Principal"
+ }
+]

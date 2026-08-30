@@ -281,7 +281,7 @@ fixtures = [
 # **** DOCTYPE OVERRIDES **** #
 
 override_doctype_class = {
-    "Loan Repayment Schedule": "mitc_hr_gom360.overrides.loan_repayment_schedule.LoanRepaymentSchedule",
+    "Loan Repayment Schedule": "mitc_hr_gom360.overrides.loan_repayment_schedule.CustomLoanRepaymentSchedule",
     "Loan Application": "mitc_hr_gom360.overrides.loan_application.CustomLoanApplication"
 }
 
@@ -294,9 +294,9 @@ doctype_js = {
 
 
 # Ensure background schedule utility calls use our custom logic
-#override_whitelisted_methods = {
-    #"lending.loan_management.doctype.loan_repayment_schedule.loan_repayment_schedule.get_repayment_schedule": "mitc_hr_gom360.overrides.loan_repayment_schedule.custom_get_repayment_schedule"
-#}
+override_whitelisted_methods = {
+    "lending.loan_management.doctype.loan_repayment_schedule.loan_repayment_schedule.get_repayment_schedule": "mitc_hr_gom360.overrides.loan_repayment_schedule.custom_get_repayment_schedule"
+}
 
 
 # Ignore linked pension contribution record on payroll entry delete

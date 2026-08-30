@@ -1,0 +1,35 @@
+import frappe
+from frappe.utils import flt
+from lending.loan_management.doctype.loan_application.loan_application import LoanApplication
+
+class CustomLoanApplication(LoanApplication):
+
+    def validate(self):
+        # Sync custom field into standard field before saving
+        if self.repayment_method == "Repay Equal Principal":
+            custom_period = getattr(self, "custom_rep_repayment_period_in_months", None)
+            if custom_period:
+                self.repayment_periods = custom_period
+        
+        super().validate()
+
+    def get_repayment_details(self):
+        if self.repayment_method == "Repay Equal Principal":
+            periods = self.repayment_periods or getattr(self, "custom_rep_repayment_period_in_months", 0)
+            
+            if not periods:
+                frappe.throw(frappe._("Repayment Period in Months is required for Equal Principal repayment."))
+
+            # Ensure repayment_periods is explicitly set on doc
+            self.repayment_periods = int(periods)
+
+            # Estimate initial month payment to satisfy Lending validation
+            base_principal = flt(self.loan_amount) / flt(self.repayment_periods)
+            first_month_interest = (flt(self.loan_amount) * flt(self.rate_of_interest) * 30) / (12 * 100)
+            
+            self.repayment_amount = flt(base_principal + first_month_interest, self.precision("loan_amount"))
+            self.monthly_repayment_amount = self.repayment_amount
+            self.total_payable_amount = flt(self.loan_amount)
+            return
+
+        super().get_repayment_details()

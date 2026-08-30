@@ -1,0 +1,67 @@
+import frappe
+from frappe.utils import flt, getdate, add_months
+from lending.loan_management.doctype.loan_repayment_schedule.loan_repayment_schedule import LoanRepaymentSchedule, get_repayment_schedule as core_get_repayment_schedule
+
+class CustomLoanRepaymentSchedule(LoanRepaymentSchedule):
+
+    def get_schedule(self):
+        # Override instance method if called directly on document
+        if self.repayment_method == "Repay Equal Principal":
+            return generate_equal_principal_schedule(self)
+        return super().get_schedule()
+
+def custom_get_repayment_schedule(doc):
+    """
+    Hook/Wrapper to hijack schedule generation requests for Equal Principal
+    """
+    repayment_method = getattr(doc, "repayment_method", None)
+    
+    if repayment_method == "Repay Equal Principal":
+        return generate_equal_principal_schedule(doc)
+    
+    return core_get_repayment_schedule(doc)
+
+
+def generate_equal_principal_schedule(doc):
+    schedule = []
+    loan_amount = flt(doc.loan_amount or doc.current_principal_amount)
+    periods = int(getattr(doc, "repayment_periods", 0) or getattr(doc, "custom_rep_repayment_period_in_months", 0) or 1)
+    annual_rate = flt(doc.rate_of_interest)
+    start_date = getdate(doc.repayment_start_date or doc.posting_date)
+
+    if not periods or periods <= 0:
+        return []
+
+    # FIXED PRINCIPAL PER MONTH
+    fixed_principal = flt(loan_amount / periods, doc.precision("principal_amount", "repayment_schedule"))
+    remaining_balance = loan_amount
+
+    for i in range(1, periods + 1):
+        # Handle last period rounding adjustment so balance lands exactly on 0
+        if i == periods:
+            principal_amount = flt(remaining_balance, doc.precision("principal_amount", "repayment_schedule"))
+        else:
+            principal_amount = fixed_principal
+
+        # Interest calculated strictly on remaining balance
+        monthly_interest = flt((remaining_balance * annual_rate * 30) / (365 * 100), doc.precision("interest_amount", "repayment_schedule"))
+        
+        # Total Payment reduces each month as interest drops
+        total_payment = flt(principal_amount + monthly_interest, doc.precision("total_payment", "repayment_schedule"))
+        
+        remaining_balance = flt(remaining_balance - principal_amount, doc.precision("balance_loan_amount", "repayment_schedule"))
+        if remaining_balance < 0:
+            remaining_balance = 0.0
+
+        payment_date = add_months(start_date, i - 1)
+
+        schedule.append({
+            "idx": i,
+            "payment_date": payment_date,
+            "principal_amount": principal_amount,
+            "interest_amount": monthly_interest,
+            "total_payment": total_payment,
+            "balance_loan_amount": remaining_balance
+        })
+
+    return schedule

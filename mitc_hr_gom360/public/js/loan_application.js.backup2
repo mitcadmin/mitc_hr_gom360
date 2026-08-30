@@ -1,0 +1,32 @@
+frappe.ui.form.on('Loan Application', {
+    refresh: function(frm) {
+        frm.trigger('toggle_repayment_fields');
+    },
+    repayment_method: function(frm) {
+        frm.trigger('toggle_repayment_fields');
+    },
+    toggle_repayment_fields: function(frm) {
+        if (frm.doc.repayment_method === 'Repay Equal Principal') {
+            // Hide Monthly Repayment Amount, Show & Require Repayment Periods
+            frm.set_df_property('monthly_repayment_amount', 'hidden', 1);
+            frm.set_df_property('monthly_repayment_amount', 'reqd', 0);
+            
+            frm.set_df_property('repayment_periods', 'hidden', 0);
+            frm.set_df_property('repayment_periods', 'reqd', 1);
+            
+            frm.set_value('monthly_repayment_amount', 0);
+        } else if (frm.doc.repayment_method === 'Repay Over Number of Periods') {
+            frm.set_df_property('monthly_repayment_amount', 'hidden', 1);
+            frm.set_df_property('monthly_repayment_amount', 'reqd', 0);
+            
+            frm.set_df_property('repayment_periods', 'hidden', 0);
+            frm.set_df_property('repayment_periods', 'reqd', 1);
+        } else if (frm.doc.repayment_method === 'Repay Fixed Amount per Period') {
+            frm.set_df_property('monthly_repayment_amount', 'hidden', 0);
+            frm.set_df_property('monthly_repayment_amount', 'reqd', 1);
+            
+            frm.set_df_property('repayment_periods', 'hidden', 1);
+            frm.set_df_property('repayment_periods', 'reqd', 0);
+        }
+    }
+});

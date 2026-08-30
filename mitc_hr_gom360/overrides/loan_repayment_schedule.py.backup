@@ -1,0 +1,96 @@
+import frappe
+from frappe.utils import flt
+from lending.loan_management.doctype.loan_repayment_schedule.loan_repayment_schedule import (
+    LoanRepaymentSchedule,
+)
+from lending.loan_management.doctype.loan_repayment_schedule.utils import (
+    add_single_month,
+    get_days_and_months,
+    get_loan_partner_details,
+    set_demand,
+)
+
+class CustomLoanRepaymentSchedule(LoanRepaymentSchedule):
+
+    def validate(self):
+        # Validate periods when using Equal Principal
+        if self.repayment_method == "Repay Equal Principal":
+            if not self.repayment_periods or self.repayment_periods <= 0:
+                frappe.throw(frappe._("Repayment Periods must be greater than 0 for Equal Principal repayment."))
+        
+        super().validate()
+
+    def make_repayment_schedule(self):
+        # Fall back to native Lending EMI calculation for standard methods
+        if self.repayment_method != "Repay Equal Principal":
+            return super().make_repayment_schedule()
+
+        # Execute MITC Custom Equal Principal logic
+        self.schedules = []
+
+        balance_amount = flt(self.loan_amount)
+        if not balance_amount or not self.repayment_periods:
+            return
+
+        # 1. Base equal principal allocation per period
+        base_principal = flt(balance_amount / self.repayment_periods, self.precision("loan_amount"))
+        
+        payment_date = self.repayment_start_date
+        rate_of_interest = flt(self.rate_of_interest)
+        partner_details = get_loan_partner_details(self.loan)
+
+        # Handle moratorium/grace period if configured
+        grace_period_start_date = None
+        if getattr(self, "grace_period_in_months", 0):
+            grace_period_start_date = payment_date
+            for _ in range(self.grace_period_in_months):
+                payment_date = add_single_month(payment_date)
+
+        for i in range(1, self.repayment_periods + 1):
+            is_last_period = (i == self.repayment_periods)
+            
+            # 2. Assign principal; last installment absorbs rounding leftovers to guarantee 0 balance
+            if is_last_period:
+                principal_amount = flt(balance_amount, self.precision("loan_amount"))
+            else:
+                principal_amount = base_principal
+
+            # 3. Calculate period days and months using Lending machinery
+            days, months = get_days_and_months(
+                payment_date,
+                self.repayment_frequency,
+                self.posting_date,
+                grace_period_start_date,
+                i
+            )
+
+            # 4. Calculate interest on the opening balance for this period
+            interest_amount = flt(
+                (balance_amount * rate_of_interest * days) / (months * 100),
+                self.precision("loan_amount")
+            )
+
+            # Total payment = Equal Principal + Decreasing Interest
+            total_payment = principal_amount + interest_amount
+            
+            # 5. Deduct principal from balance
+            balance_amount = flt(balance_amount - principal_amount, self.precision("loan_amount"))
+           if is_last_period or balance_amount < 0:
+                balance_amount = 0.0
+
+            # 6. Build repayment row mapping
+            schedule_data = {
+                "payment_date": payment_date,
+                "principal_amount": principal_amount,
+                "interest_amount": interest_amount,
+                "total_payment": total_payment,
+                "balance_loan_amount": balance_amount,
+                "is_accrued": 0,
+            }
+
+            # Apply loan partner/demand logic if present
+            schedule_data = set_demand(self, schedule_data, partner_details)
+            self.append("schedules", schedule_data)
+
+            # Move to next installment date
+            payment_date = add_single_month(payment_date)

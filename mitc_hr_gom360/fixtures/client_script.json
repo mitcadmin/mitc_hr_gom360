@@ -2,6 +2,17 @@
  {
   "docstatus": 0,
   "doctype": "Client Script",
+  "dt": "Loan Application",
+  "enabled": 0,
+  "modified": "2026-08-30 01:44:09.543892",
+  "module": "Mitc Hr Gom360",
+  "name": "Show repayment periods field",
+  "script": "frappe.ui.form.on('Loan Application', {\r\n    setup: function(frm) {\r\n        // Override the field's depends_on expression before the form renders\r\n        if (frm.fields_dict.repayment_periods) {\r\n            frm.set_df_property(\r\n                'repayment_periods',\r\n                'depends_on',\r\n                'eval:in_list([\"Repay Over Number of Periods\", \"Repay Equal Principal\"], doc.repayment_method)'\r\n            );\r\n            frm.set_df_property(\r\n                'repayment_periods',\r\n                'mandatory_depends_on',\r\n                'eval:in_list([\"Repay Over Number of Periods\", \"Repay Equal Principal\"], doc.repayment_method)'\r\n            );\r\n        }\r\n    },\r\n    refresh: function(frm) {\r\n        frm.trigger('toggle_repayment_fields');\r\n    },\r\n    repayment_method: function(frm) {\r\n        frm.trigger('toggle_repayment_fields');\r\n    },\r\n    toggle_repayment_fields: function(frm) {\r\n        const is_period_based = [\r\n            'Repay Over Number of Periods',\r\n            'Repay Equal Principal'\r\n        ].includes(frm.doc.repayment_method);\r\n\r\n        // Explicitly refresh field visibility\r\n        frm.toggle_display('repayment_periods', is_period_based);\r\n        frm.toggle_reqd('repayment_periods', is_period_based);\r\n\r\n        if (frm.doc.repayment_method === 'Repay Fixed Amount per Period') {\r\n            frm.toggle_display('repayment_amount', true);\r\n            frm.toggle_reqd('repayment_amount', true);\r\n        } else {\r\n            frm.toggle_display('repayment_amount', false);\r\n            frm.toggle_reqd('repayment_amount', false);\r\n        }\r\n    }\r\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
   "dt": "Government Remittance",
   "enabled": 1,
   "modified": "2026-08-07 00:04:02.627773",

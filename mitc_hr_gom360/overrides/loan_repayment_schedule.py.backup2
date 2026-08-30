@@ -1,0 +1,47 @@
+import frappe
+from frappe.utils import flt, getdate, add_months
+from lending.loan_management.doctype.loan_repayment_schedule.loan_repayment_schedule import LoanRepaymentSchedule
+
+class CustomLoanRepaymentSchedule(LoanRepaymentSchedule):
+    @staticmethod
+    def get_repayment_schedule(doc):
+        # Check if our repayment method is Equal Principal
+        if getattr(doc, "repayment_method", None) == "Repay Equal Principal":
+            schedule = []
+            loan_amount = flt(doc.loan_amount)
+            periods = int(doc.repayment_periods or getattr(doc, "custom_rep_repayment_period_in_months", 0))
+            annual_interest_rate = flt(doc.rate_of_interest)
+            
+            if not periods:
+                return []
+
+            principal_per_month = loan_amount / periods
+            remaining_balance = loan_amount
+            start_date = getdate(doc.disbursement_date or doc.posting_date)
+
+            total_interest = 0.0
+
+            for i in range(1, periods + 1):
+                # Calculate monthly interest on the remaining balance
+                monthly_interest = (remaining_balance * annual_interest_rate) / (12 * 100)
+                total_interest += monthly_interest
+                
+                total_payment = principal_per_month + monthly_interest
+                
+                # Determine payment date (e.g., monthly increments)
+                payment_date = add_months(start_date, i)
+
+                schedule.append({
+                    "payment_date": payment_date,
+                    "principal_amount": flt(principal_per_month, doc.precision("total_payment", "repayment_schedule")),
+                    "interest_amount": flt(monthly_interest, doc.precision("total_payment", "repayment_schedule")),
+                    "total_payment": flt(total_payment, doc.precision("total_payment", "repayment_schedule")),
+                    "balance_loan_amount": flt(max(0, remaining_balance - principal_per_month), doc.precision("total_payment", "repayment_schedule"))
+                })
+
+                remaining_balance -= principal_per_month
+
+            return schedule
+
+        # Fall back to default core lending logic for other methods
+        return LoanRepaymentSchedule.get_repayment_schedule(doc)

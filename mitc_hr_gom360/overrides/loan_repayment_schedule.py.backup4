@@ -1,0 +1,56 @@
+import frappe
+from frappe.utils import flt, getdate, add_months
+from lending.loan_management.doctype.loan_repayment_schedule.loan_repayment_schedule import LoanRepaymentSchedule
+
+class CustomLoanRepaymentSchedule(LoanRepaymentSchedule):
+
+    def get_schedule(self):
+        # Hijack calculation if repayment method is Repay Equal Principal
+        if getattr(self, "repayment_method", None) == "Repay Equal Principal":
+            return self.generate_equal_principal_schedule()
+        
+        # Fallback to standard core EMI logic for fixed amount/period options
+        return super().get_schedule()
+
+    def generate_equal_principal_schedule(self):
+        schedule = []
+        loan_amount = flt(self.loan_amount or self.current_principal_amount)
+        periods = int(getattr(self, "repayment_periods", 0) or getattr(self, "custom_rep_repayment_period_in_months", 0) or 1)
+        annual_rate = flt(self.rate_of_interest)
+        start_date = getdate(self.repayment_start_date or self.posting_date)
+
+        if not periods or periods <= 0:
+            return []
+
+        # 1. FIXED PRINCIPAL PER MONTH
+        fixed_principal = flt(loan_amount / periods, self.precision("principal_amount", "repayment_schedule"))
+        remaining_balance = loan_amount
+
+        for i in range(1, periods + 1):
+            if i == periods:
+                principal_amount = flt(remaining_balance, self.precision("principal_amount", "repayment_schedule"))
+            else:
+                principal_amount = fixed_principal
+
+            # 2. INTEREST CALCULATED ON REMAINING BALANCE
+            monthly_interest = flt((remaining_balance * annual_rate) / (12 * 100), self.precision("interest_amount", "repayment_schedule"))
+            
+            # 3. TOTAL PAYMENT REDUCES MONTHLY
+            total_payment = flt(principal_amount + monthly_interest, self.precision("total_payment", "repayment_schedule"))
+            
+            remaining_balance = flt(remaining_balance - principal_amount, self.precision("balance_loan_amount", "repayment_schedule"))
+            if remaining_balance < 0:
+                remaining_balance = 0.0
+
+            payment_date = add_months(start_date, i - 1)
+
+            schedule.append({
+                "idx": i,
+                "payment_date": payment_date,
+                "principal_amount": principal_amount,
+                "interest_amount": monthly_interest,
+                "total_payment": total_payment,
+                "balance_loan_amount": remaining_balance
+            })
+
+        return schedule
