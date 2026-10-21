@@ -7,7 +7,7 @@
   "doctype_or_field": "DocField",
   "field_name": "repayment_method",
   "is_system_generated": 0,
-  "modified": "2026-08-30 13:50:30.148700",
+  "modified": "2026-09-01 20:16:22.816336",
   "module": null,
   "name": "Loan Application-repayment_method-options",
   "property": "options",

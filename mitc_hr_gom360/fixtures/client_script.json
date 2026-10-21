@@ -2,6 +2,17 @@
  {
   "docstatus": 0,
   "doctype": "Client Script",
+  "dt": "Salary Slip",
+  "enabled": 0,
+  "modified": "2026-08-28 10:32:02.127161",
+  "module": "Mitc Hr Gom360",
+  "name": "Hide payment days tab in salary slip",
+  "script": "// Hide Payment Days tab for everyone apart from HR Manager Role\nfrappe.ui.form.on('Salary Slip', {\n    refresh: function(frm) {\n        // Check if the current user has the HR Manager role\n        if (!frappe.user.has_role('HR Manager')) {\n            // Hide the 'Payment Days' tab\n            frm.toggle_display_tab('payment_days_tab', false);\n        }\n    }\n});\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
   "dt": "Loan Application",
   "enabled": 0,
   "modified": "2026-08-30 01:44:09.543892",
