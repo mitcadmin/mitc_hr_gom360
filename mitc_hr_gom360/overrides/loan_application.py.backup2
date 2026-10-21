@@ -1,0 +1,21 @@
+import frappe
+from frappe.utils import flt
+from lending.loan_management.doctype.loan_application.loan_application import LoanApplication
+
+class CustomLoanApplication(LoanApplication):
+
+    def get_repayment_details(self):
+        if self.repayment_method == "Repay Equal Principal":
+            if not self.repayment_periods:
+                frappe.throw(frappe._("Repayment Period in Months is required for Equal Principal repayment."))
+
+            base_principal = flt(self.loan_amount) / flt(self.repayment_periods)
+            first_month_interest = (flt(self.loan_amount) * flt(self.rate_of_interest) * 30) / (12 * 100)
+            
+            # Set values expected by Core Lending
+            self.repayment_amount = flt(base_principal + first_month_interest, self.precision("loan_amount"))
+            self.total_payable_amount = flt(self.loan_amount)
+            return
+
+        # Fallback to default internal method
+        super().get_repayment_details()

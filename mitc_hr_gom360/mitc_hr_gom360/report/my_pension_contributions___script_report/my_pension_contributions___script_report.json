@@ -1,0 +1,59 @@
+{
+ "add_total_row": 1,
+ "add_translate_data": 0,
+ "columns": [],
+ "creation": "2026-08-25 09:57:44.360889",
+ "disable_prepared_report_automation": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "doctype_to_sync": [],
+ "filters": [
+  {
+   "default": "2026-04-01",
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "mandatory": 0,
+   "wildcard_filter": 0
+  },
+  {
+   "default": "2027-03-31",
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "mandatory": 0,
+   "wildcard_filter": 0
+  }
+ ],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": null,
+ "modified": "2026-08-26 21:03:08.318271",
+ "modified_by": "Administrator",
+ "module": "Mitc Hr Gom360",
+ "name": "My Pension Contributions - Script Report",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT\r\n    pc.employee AS \"Employee:Link/Employee:120\",\r\n    pc.employee_full_name AS \"Employee Name:Data:180\",\r\n    DATE_FORMAT(pc.from_date, '%%M %%Y') AS \"Contribution Month:Data:130\",\r\n    pc.from_date AS \"From Date:Date:100\",\r\n    pc.end_date AS \"End Date:Date:100\",\r\n\r\n    pc.gross_pay AS \"Gross Pay:Currency:130\",\r\n\r\n    pc.employee_pension_contribution\r\n        AS \"Employee Pension (5%%):Currency:150\",\r\n\r\n    pc.company_pension_contribution\r\n        AS \"Company Pension (10%%):Currency:160\",\r\n\r\n    pc.total_pension_contribution\r\n        AS \"Total Pension:Currency:140\",\r\n\r\n    pc.payroll_entry\r\n        AS \"Payroll Entry:Link/Payroll Entry:150\",\r\n\r\n    pc.salary_slip\r\n        AS \"Salary Slip:Link/Salary Slip:160\"\r\n\r\nFROM\r\n    `tabMITC Pension Contribution` pc\r\n\r\nWHERE\r\n    pc.docstatus = 1\r\n\r\n    AND (\r\n        %(employee)s = ''\r\n        OR pc.employee = %(employee)s\r\n    )\r\n\r\n    AND pc.from_date >= %(from_date)s\r\n    AND pc.end_date <= %(to_date)s\r\n\r\nORDER BY\r\n    pc.from_date DESC,\r\n    pc.employee_full_name",
+ "ref_doctype": "MITC Pension Contribution",
+ "report_name": "My Pension Contributions - Script Report",
+ "report_script": "conditions = [\"pc.docstatus = 1\"]\r\nvalues = {}\r\n\r\n# Get the Employee linked to the currently logged-in Frappe user\r\nemployee = frappe.db.get_value(\r\n    \"Employee\",\r\n    {\"user_id\": frappe.session.user},\r\n    \"name\"\r\n)\r\n\r\n# If the logged-in user is not linked to an Employee, return no records\r\nif not employee:\r\n    columns = [\r\n        {\r\n            \"label\": \"Employee\",\r\n            \"fieldname\": \"employee\",\r\n            \"fieldtype\": \"Link\",\r\n            \"options\": \"Employee\",\r\n            \"width\": 160\r\n        },\r\n        {\r\n            \"label\": \"Contribution Month\",\r\n            \"fieldname\": \"contribution_month\",\r\n            \"fieldtype\": \"Data\",\r\n            \"width\": 130\r\n        },\r\n        {\r\n            \"label\": \"Gross Pay\",\r\n            \"fieldname\": \"gross_pay\",\r\n            \"fieldtype\": \"Currency\",\r\n            \"width\": 130\r\n        },\r\n        {\r\n            \"label\": \"Employee Pension (5%)\",\r\n            \"fieldname\": \"employee_pension\",\r\n            \"fieldtype\": \"Currency\",\r\n            \"width\": 150\r\n        },\r\n        {\r\n            \"label\": \"Company Pension (10%)\",\r\n            \"fieldname\": \"company_pension\",\r\n            \"fieldtype\": \"Currency\",\r\n            \"width\": 160\r\n        },\r\n        {\r\n            \"label\": \"Total Pension\",\r\n            \"fieldname\": \"total_pension\",\r\n            \"fieldtype\": \"Currency\",\r\n            \"width\": 140\r\n        },\r\n        {\r\n            \"label\": \"Salary Slip\",\r\n            \"fieldname\": \"salary_slip\",\r\n            \"fieldtype\": \"Link\",\r\n            \"options\": \"Salary Slip\",\r\n            \"width\": 160\r\n        }\r\n    ]\r\n\r\n    data = [columns, []]\r\n\r\nelse:\r\n    conditions.append(\"pc.employee = %(employee)s\")\r\n    values[\"employee\"] = employee\r\n\r\n    from_date = filters.get(\"from_date\")\r\n    to_date = filters.get(\"to_date\")\r\n\r\n    if from_date:\r\n        conditions.append(\"pc.from_date >= %(from_date)s\")\r\n        values[\"from_date\"] = from_date\r\n\r\n    if to_date:\r\n        conditions.append(\"pc.from_date <= %(to_date)s\")\r\n        values[\"to_date\"] = to_date\r\n\r\n    where_clause = \" AND \".join(conditions)\r\n\r\n    query = \"\"\"\r\n        SELECT\r\n            pc.employee AS employee,\r\n            pc.employee_full_name AS employee_name,\r\n            DATE_FORMAT(pc.from_date, '%%M %%Y') AS contribution_month,\r\n            pc.from_date AS from_date,\r\n            pc.end_date AS end_date,\r\n            pc.gross_pay AS gross_pay,\r\n            pc.employee_pension_contribution AS employee_pension,\r\n            pc.company_pension_contribution AS company_pension,\r\n            pc.total_pension_contribution AS total_pension,\r\n            pc.payroll_entry AS payroll_entry,\r\n            pc.salary_slip AS salary_slip\r\n\r\n        FROM\r\n            `tabMITC Pension Contribution` pc\r\n\r\n        WHERE\r\n            \"\"\" + where_clause + \"\"\"\r\n\r\n        ORDER BY\r\n            pc.from_date DESC\r\n    \"\"\"\r\n\r\n    result = frappe.db.sql(\r\n        query,\r\n        values,\r\n        as_dict=True\r\n    )\r\n\r\n    columns = [\r\n        {\r\n            \"label\": \"Employee\",\r\n            \"fieldname\": \"employee\",\r\n            \"fieldtype\": \"Link\",\r\n            \"options\": \"Employee\",\r\n            \"width\": 230\r\n        },\r\n        {\r\n            \"label\": \"Contribution Month\",\r\n            \"fieldname\": \"contribution_month\",\r\n            \"fieldtype\": \"Data\",\r\n            \"width\": 130\r\n        },\r\n        {\r\n            \"label\": \"Gross Pay\",\r\n            \"fieldname\": \"gross_pay\",\r\n            \"fieldtype\": \"Currency\",\r\n            \"width\": 130\r\n        },\r\n        {\r\n            \"label\": \"Employee Pension (5%)\",\r\n            \"fieldname\": \"employee_pension\",\r\n            \"fieldtype\": \"Currency\",\r\n            \"width\": 150\r\n        },\r\n        {\r\n            \"label\": \"Company Pension (10%)\",\r\n            \"fieldname\": \"company_pension\",\r\n            \"fieldtype\": \"Currency\",\r\n            \"width\": 160\r\n        },\r\n        {\r\n            \"label\": \"Total Pension\",\r\n            \"fieldname\": \"total_pension\",\r\n            \"fieldtype\": \"Currency\",\r\n            \"width\": 140\r\n        },\r\n        {\r\n            \"label\": \"Salary Slip\",\r\n            \"fieldname\": \"salary_slip\",\r\n            \"fieldtype\": \"Link\",\r\n            \"options\": \"Salary Slip\",\r\n            \"width\": 160\r\n        }\r\n    ]\r\n\r\n    data = [columns, result]",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Employee Self Service"
+  },
+  {
+   "role": "HR Manager"
+  },
+  {
+   "role": "Admin & HR Manager"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "snapshot_report": 0,
+ "timeout": 0
+}

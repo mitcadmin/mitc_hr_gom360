@@ -1,0 +1,170 @@
+{
+ "actions": [],
+ "creation": "2026-08-13 21:26:35.742481",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "payment_item",
+  "party_type",
+  "party_name",
+  "bene_name",
+  "bene_bank_name",
+  "bene_account_num",
+  "bene_bank_bic",
+  "amount",
+  "currency",
+  "source_ref_number",
+  "national_id",
+  "employee_number",
+  "vendor_code",
+  "invoice_number",
+  "cost_center",
+  "payment_description"
+ ],
+ "fields": [
+  {
+   "fieldname": "payment_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Payment Item",
+   "options": "OBDX Normal Payment Item"
+  },
+  {
+   "fetch_from": "payment_item.bene_name",
+   "fieldname": "bene_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Beneficiary Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.amount",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.currency",
+   "fieldname": "currency",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Currency",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.source_ref_number",
+   "fieldname": "source_ref_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Source Ref Number",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.party_type",
+   "fieldname": "party_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Party Type",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.bene_bank_bic",
+   "fieldname": "bene_bank_bic",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Payee Bank Code",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.national_id",
+   "fieldname": "national_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "National ID",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.employee_number",
+   "fieldname": "employee_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Employee Number",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.vendor_code",
+   "fieldname": "vendor_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Vendor Code",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.invoice_number",
+   "fieldname": "invoice_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Invoice Number",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.payment_description",
+   "fieldname": "payment_description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Description",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.bene_bank_name",
+   "fieldname": "bene_bank_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Bank Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.bene_account_num",
+   "fieldname": "bene_account_num",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Bank Account Number",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.cost_center",
+   "fieldname": "cost_center",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Cost Center",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_item.party_name",
+   "fieldname": "party_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Party Name",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-08-13 21:57:10.616692",
+ "modified_by": "Administrator",
+ "module": "Mitc Hr Gom360",
+ "name": "OBDX Normal Payment Reference",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

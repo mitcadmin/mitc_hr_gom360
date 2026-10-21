@@ -1,0 +1,64 @@
+{
+ "charts": [
+  {
+   "chart_name": "Monthly Pension Contributions",
+   "label": "Monthly Pension Contributions"
+  }
+ ],
+ "content": "[{\"id\":\"aCQ-NR-S9V\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">My Pension</span>\",\"col\":12}},{\"id\":\"KnLpUpdy0D\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Monthly Pension Contributions\",\"col\":12}},{\"id\":\"B5JtOLK6-b\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"My Pension Summary\",\"col\":4}},{\"id\":\"kSL07Ae3nc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"My Pension Contribution History\",\"col\":5}}]",
+ "creation": "2026-08-25 23:08:39.610626",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "My Pension",
+ "links": [],
+ "modified": "2026-08-26 21:55:39.811691",
+ "modified_by": "Administrator",
+ "module": "Mitc Hr Gom360",
+ "name": "My Pension",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Employee Self Service"
+  },
+  {
+   "role": "HR Manager"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Admin & HR Manager"
+  }
+ ],
+ "sequence_id": 36.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "My Pension Summary",
+   "link_to": "My Pension Summary",
+   "report_ref_doctype": "MITC Pension Contribution",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "My Pension Contribution History",
+   "link_to": "My Pension Contributions Detailed",
+   "report_ref_doctype": "MITC Pension Contribution",
+   "type": "Report"
+  }
+ ],
+ "title": "My Pension"
+}
